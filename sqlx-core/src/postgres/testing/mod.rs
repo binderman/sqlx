@@ -113,8 +113,6 @@ async fn test_context(args: &TestArgs) -> Result<TestContext<Postgres>, Error> {
         // but a clearly related bug with `CREATE TABLE` has been known since 2007:
         // https://www.postgresql.org/message-id/200710222037.l9MKbCJZ098744%40wwwmaster.postgresql.org
         r#"
-        lock table pg_catalog.pg_namespace in share row exclusive mode;
-
         create schema if not exists _sqlx_test;
 
         create table if not exists _sqlx_test.databases (
