@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS _sqlx_migrations (
     fn lock(&mut self) -> BoxFuture<'_, Result<(), MigrateError>> {
         Box::pin(async move {
             let database_name = current_database(self).await?;
-            // let lock_id = generate_lock_id(&database_name);
+            let lock_id = generate_lock_id(&database_name);
 
             // create an application lock over the database
             // this function will not return until the lock is acquired
@@ -166,10 +166,10 @@ CREATE TABLE IF NOT EXISTS _sqlx_migrations (
             // https://www.postgresql.org/docs/current/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS-TABLE
 
             // language=SQL
-            // let _ = query("SELECT pg_advisory_lock($1)")
-            //     .bind(lock_id)
-            //     .execute(self)
-            //     .await?;
+            let _ = query("SELECT pg_advisory_lock($1)")
+                .bind(lock_id)
+                .execute(self)
+                .await?;
 
             Ok(())
         })
@@ -178,13 +178,13 @@ CREATE TABLE IF NOT EXISTS _sqlx_migrations (
     fn unlock(&mut self) -> BoxFuture<'_, Result<(), MigrateError>> {
         Box::pin(async move {
             let database_name = current_database(self).await?;
-            // let lock_id = generate_lock_id(&database_name);
+            let lock_id = generate_lock_id(&database_name);
 
-            // // language=SQL
-            // let _ = query("SELECT pg_advisory_unlock($1)")
-            //     .bind(lock_id)
-            //     .execute(self)
-            //     .await?;
+            // language=SQL
+            let _ = query("SELECT pg_advisory_unlock($1)")
+                .bind(lock_id)
+                .execute(self)
+                .await?;
 
             Ok(())
         })
